@@ -2,9 +2,13 @@ package com.example.twitterclone.controller;
 
 import com.example.twitterclone.entity.User;
 import com.example.twitterclone.service.UserService;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/users")
@@ -17,13 +21,13 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        User savedUser = userService.createUser(user);
+public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
+    User savedUser = userService.createUser(user);
 
-        savedUser.setPassword(null);
+    savedUser.setPassword(null);
 
-        return savedUser;
-    }
+    return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+}
 
     @GetMapping
     public List<User> getAllUsers() {
@@ -42,7 +46,7 @@ public User getUserById(@PathVariable Long id) {
     return user;
 }
 @PutMapping("/{id}")
-public User updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+public User updateUser(@PathVariable Long id, @Valid @RequestBody User updatedUser) {
 
     User user = userService.updateUser(id, updatedUser);
 
@@ -51,10 +55,10 @@ public User updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
     return user;
 }
 @DeleteMapping("/{id}")
-public String deleteUser(@PathVariable Long id) {
+public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
 
     userService.deleteUser(id);
 
-    return "User deleted successfully with id: " + id;
+    return ResponseEntity.noContent().build();
 }
 }

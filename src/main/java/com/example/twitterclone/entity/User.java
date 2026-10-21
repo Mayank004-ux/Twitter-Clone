@@ -5,26 +5,37 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    private String name;
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
 
-    private String username;
+@NotBlank(message = "Name cannot be empty")
+private String name;
 
-    private String email;
+@NotBlank(message = "Username cannot be empty")
+@Size(min = 3, max = 20, message = "Username must be between 3 and 20 characters")
+private String username;
 
-    private String password;
+@NotBlank(message = "Email cannot be empty")
+@Email(message = "Please provide a valid email address")
+private String email;
 
-    public User() {
-    }
-    public Long getId() {
+@NotBlank(message = "Password cannot be empty")
+private String password;
+
+public User() {
+}
+
+public Long getId() {
     return id;
 }
 
@@ -59,4 +70,6 @@ public String getPassword() {
 public void setPassword(String password) {
     this.password = password;
 }
+
+
 }
