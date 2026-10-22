@@ -1,6 +1,7 @@
 package com.example.twitterclone.service;
 
 import com.example.twitterclone.entity.User;
+import com.example.twitterclone.exception.DuplicateResourceException;
 import com.example.twitterclone.exception.ResourceNotFoundException;
 import com.example.twitterclone.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,15 @@ public UserService(UserRepository userRepository) {
 }
 
 public User createUser(User user) {
+
+    if (userRepository.existsByUsername(user.getUsername())) {
+        throw new DuplicateResourceException("Username is already taken");
+    }
+
+    if (userRepository.existsByEmail(user.getEmail())) {
+        throw new DuplicateResourceException("Email is already registered");
+    }
+
     return userRepository.save(user);
 }
 
@@ -36,6 +46,20 @@ public User updateUser(Long id, User updatedUser) {
     User existingUser = userRepository.findById(id)
             .orElseThrow(() ->
                     new ResourceNotFoundException("User not found with id: " + id));
+
+    if (userRepository.existsByUsernameAndIdNot(
+            updatedUser.getUsername(), id)) {
+
+        throw new DuplicateResourceException(
+                "Username is already taken");
+    }
+
+    if (userRepository.existsByEmailAndIdNot(
+            updatedUser.getEmail(), id)) {
+
+        throw new DuplicateResourceException(
+                "Email is already registered");
+    }
 
     existingUser.setName(updatedUser.getName());
     existingUser.setUsername(updatedUser.getUsername());
