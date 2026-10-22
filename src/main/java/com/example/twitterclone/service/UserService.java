@@ -2,6 +2,7 @@ package com.example.twitterclone.service;
 
 import com.example.twitterclone.entity.User;
 import com.example.twitterclone.exception.DuplicateResourceException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.twitterclone.exception.ResourceNotFoundException;
 import com.example.twitterclone.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -13,20 +14,29 @@ public class UserService {
 
 
 private final UserRepository userRepository;
+private final PasswordEncoder passwordEncoder;
 
-public UserService(UserRepository userRepository) {
+public UserService(
+        UserRepository userRepository,
+        PasswordEncoder passwordEncoder) {
+
     this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
 }
 
 public User createUser(User user) {
 
     if (userRepository.existsByUsername(user.getUsername())) {
-        throw new DuplicateResourceException("Username is already taken");
+        throw new DuplicateResourceException(
+                "Username is already taken");
     }
 
     if (userRepository.existsByEmail(user.getEmail())) {
-        throw new DuplicateResourceException("Email is already registered");
+        throw new DuplicateResourceException(
+                "Email is already registered");
     }
+
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
 
     return userRepository.save(user);
 }
