@@ -2,6 +2,9 @@ package com.example.twitterclone.controller;
 
 import com.example.twitterclone.entity.User;
 import com.example.twitterclone.service.UserService;
+import com.example.twitterclone.dto.CreateUserRequest;
+import com.example.twitterclone.dto.UpdateUserRequest;
+import com.example.twitterclone.dto.UserResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,38 +24,73 @@ public class UserController {
     }
 
     @PostMapping
-public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
+public ResponseEntity<UserResponse> createUser(
+        @Valid @RequestBody CreateUserRequest request) {
+
+    User user = new User();
+
+    user.setName(request.getName());
+    user.setUsername(request.getUsername());
+    user.setEmail(request.getEmail());
+    user.setPassword(request.getPassword());
+
     User savedUser = userService.createUser(user);
 
-    savedUser.setPassword(null);
+    UserResponse response = new UserResponse(
+            savedUser.getId(),
+            savedUser.getName(),
+            savedUser.getUsername(),
+            savedUser.getEmail()
+    );
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
 }
 
     @GetMapping
-    public List<User> getAllUsers() {
-        List<User> users = userService.getAllUsers();
+public List<UserResponse> getAllUsers() {
 
-        users.forEach(user -> user.setPassword(null));
+    List<User> users = userService.getAllUsers();
 
-        return users;
-    }
+    return users.stream()
+            .map(user -> new UserResponse(
+                    user.getId(),
+                    user.getName(),
+                    user.getUsername(),
+                    user.getEmail()
+            ))
+            .toList();
+}
     @GetMapping("/{id}")
-public User getUserById(@PathVariable Long id) {
+public UserResponse getUserById(@PathVariable Long id) {
+
     User user = userService.getUserById(id);
 
-    user.setPassword(null);
-
-    return user;
+    return new UserResponse(
+            user.getId(),
+            user.getName(),
+            user.getUsername(),
+            user.getEmail()
+    );
 }
 @PutMapping("/{id}")
-public User updateUser(@PathVariable Long id, @Valid @RequestBody User updatedUser) {
+public UserResponse updateUser(
+        @PathVariable Long id,
+        @Valid @RequestBody UpdateUserRequest request) {
 
-    User user = userService.updateUser(id, updatedUser);
+    User updatedUser = new User();
 
-    user.setPassword(null);
+    updatedUser.setName(request.getName());
+    updatedUser.setUsername(request.getUsername());
+    updatedUser.setEmail(request.getEmail());
 
-    return user;
+    User savedUser = userService.updateUser(id, updatedUser);
+
+    return new UserResponse(
+            savedUser.getId(),
+            savedUser.getName(),
+            savedUser.getUsername(),
+            savedUser.getEmail()
+    );
 }
 @DeleteMapping("/{id}")
 public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
