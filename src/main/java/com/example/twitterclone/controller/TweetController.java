@@ -5,11 +5,13 @@ import com.example.twitterclone.dto.TweetResponse;
 import com.example.twitterclone.entity.Tweet;
 import com.example.twitterclone.service.TweetService;
 
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/tweets")
@@ -24,7 +26,7 @@ public class TweetController {
     // Create a new tweet
     @PostMapping
     public ResponseEntity<TweetResponse> createTweet(
-            @RequestBody CreateTweetRequest request) {
+          @Valid  @RequestBody CreateTweetRequest request) {
 
         Tweet savedTweet = tweetService.createTweet(request);
 

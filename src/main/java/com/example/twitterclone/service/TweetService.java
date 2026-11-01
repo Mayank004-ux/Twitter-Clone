@@ -3,8 +3,10 @@ package com.example.twitterclone.service;
 import com.example.twitterclone.dto.CreateTweetRequest;
 import com.example.twitterclone.entity.Tweet;
 import com.example.twitterclone.entity.User;
+import com.example.twitterclone.exception.ResourceNotFoundException;
 import com.example.twitterclone.repository.TweetRepository;
 import com.example.twitterclone.repository.UserRepository;
+
 
 import org.springframework.stereotype.Service;
 
@@ -28,8 +30,10 @@ public class TweetService {
     public Tweet createTweet(CreateTweetRequest request) {
 
         User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+        .orElseThrow(() ->
+                new ResourceNotFoundException(
+                        "User not found with ID: " + request.getUserId()
+                ));
 
         Tweet tweet = new Tweet();
         tweet.setContent(request.getContent());
@@ -45,13 +49,22 @@ public class TweetService {
 
     // Get tweet by ID
     public Tweet getTweetById(Long id) {
-        return tweetRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Tweet not found with ID: " + id));
-    }
+    return tweetRepository.findById(id)
+            .orElseThrow(() ->
+                    new ResourceNotFoundException(
+                            "Tweet not found with ID: " + id
+                    ));
+}
 
     // Delete a tweet
     public void deleteTweet(Long id) {
-        tweetRepository.deleteById(id);
-    }
+
+    Tweet tweet = tweetRepository.findById(id)
+            .orElseThrow(() ->
+                    new ResourceNotFoundException(
+                            "Tweet not found with ID: " + id
+                    ));
+
+    tweetRepository.delete(tweet);
+}
 }
