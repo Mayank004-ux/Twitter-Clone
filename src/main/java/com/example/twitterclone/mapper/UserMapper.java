@@ -1,25 +1,29 @@
 package com.example.twitterclone.mapper;
 
 import com.example.twitterclone.dto.CreateUserRequest;
+import com.example.twitterclone.dto.UpdateUserRequest;
 import com.example.twitterclone.dto.UserResponse;
 import com.example.twitterclone.entity.User;
-import com.example.twitterclone.dto.UpdateUserRequest;
 
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserMapper {
 
-    public User toEntity(CreateUserRequest request) {
 
-        User user = new User();
+public User toEntity(CreateUserRequest request) {
 
-        user.setName(request.getName());
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+    User user = new User();
 
-        return user;
-    }
-    public User toUpdateEntity(UpdateUserRequest request) {
+    user.setName(request.getName());
+    user.setUsername(request.getUsername());
+    user.setEmail(request.getEmail());
+    user.setPassword(request.getPassword());
+
+    return user;
+}
+
+public User toUpdateEntity(UpdateUserRequest request) {
 
     User user = new User();
 
@@ -30,13 +34,15 @@ public class UserMapper {
     return user;
 }
 
-    public UserResponse toResponse(User user) {
+public UserResponse toResponse(User user) {
 
-        return new UserResponse(
-                user.getId(),
-                user.getName(),
-                user.getUsername(),
-                user.getEmail()
-        );
-    }
+    return new UserResponse(
+            user.getId(),
+            user.getName(),
+            user.getUsername(),
+            user.getEmail()
+    );
+}
+
+
 }

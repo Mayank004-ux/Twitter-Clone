@@ -7,11 +7,11 @@ import com.example.twitterclone.entity.User;
 import com.example.twitterclone.mapper.UserMapper;
 import com.example.twitterclone.service.UserService;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -37,18 +37,16 @@ public ResponseEntity<UserResponse> createUser(
 
     User savedUser = userService.createUser(user);
 
-    UserResponse response = userMapper.toResponse(savedUser);
-
-    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    return ResponseEntity.status(HttpStatus.CREATED)
+            .body(userMapper.toResponse(savedUser));
 }
 
 // Get all users
 @GetMapping
 public List<UserResponse> getAllUsers() {
 
-    List<User> users = userService.getAllUsers();
-
-    return users.stream()
+    return userService.getAllUsers()
+            .stream()
             .map(userMapper::toResponse)
             .toList();
 }

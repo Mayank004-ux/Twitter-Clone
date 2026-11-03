@@ -2,9 +2,10 @@ package com.example.twitterclone.service;
 
 import com.example.twitterclone.entity.User;
 import com.example.twitterclone.exception.DuplicateResourceException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.twitterclone.exception.ResourceNotFoundException;
 import com.example.twitterclone.repository.UserRepository;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,16 +25,19 @@ public UserService(
     this.passwordEncoder = passwordEncoder;
 }
 
+// Create a new user
 public User createUser(User user) {
 
     if (userRepository.existsByUsername(user.getUsername())) {
         throw new DuplicateResourceException(
-                "Username is already taken");
+                "Username is already taken"
+        );
     }
 
     if (userRepository.existsByEmail(user.getEmail())) {
         throw new DuplicateResourceException(
-                "Email is already registered");
+                "Email is already registered"
+        );
     }
 
     user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -41,34 +45,37 @@ public User createUser(User user) {
     return userRepository.save(user);
 }
 
+// Get all users
 public List<User> getAllUsers() {
+
     return userRepository.findAll();
 }
 
+// Get user by ID
 public User getUserById(Long id) {
-    return userRepository.findById(id)
-            .orElseThrow(() ->
-                    new ResourceNotFoundException("User not found with id: " + id));
+
+    return findUserById(id);
 }
 
+// Update an existing user
 public User updateUser(Long id, User updatedUser) {
 
-    User existingUser = userRepository.findById(id)
-            .orElseThrow(() ->
-                    new ResourceNotFoundException("User not found with id: " + id));
+    User existingUser = findUserById(id);
 
     if (userRepository.existsByUsernameAndIdNot(
             updatedUser.getUsername(), id)) {
 
         throw new DuplicateResourceException(
-                "Username is already taken");
+                "Username is already taken"
+        );
     }
 
     if (userRepository.existsByEmailAndIdNot(
             updatedUser.getEmail(), id)) {
 
         throw new DuplicateResourceException(
-                "Email is already registered");
+                "Email is already registered"
+        );
     }
 
     existingUser.setName(updatedUser.getName());
@@ -78,14 +85,22 @@ public User updateUser(Long id, User updatedUser) {
     return userRepository.save(existingUser);
 }
 
+// Delete a user
 public void deleteUser(Long id) {
 
-    User existingUser = userRepository.findById(id)
-            .orElseThrow(() ->
-                    new ResourceNotFoundException("User not found with id: " + id));
+    User existingUser = findUserById(id);
 
     userRepository.delete(existingUser);
 }
 
+// Reusable method to find a user
+private User findUserById(Long id) {
+
+    return userRepository.findById(id)
+            .orElseThrow(() ->
+                    new ResourceNotFoundException(
+                            "User not found with id: " + id
+                    ));
+}
 
 }
