@@ -4,6 +4,7 @@ import com.example.twitterclone.dto.CreateTweetRequest;
 import com.example.twitterclone.dto.TweetResponse;
 import com.example.twitterclone.entity.Tweet;
 import com.example.twitterclone.service.TweetService;
+import com.example.twitterclone.dto.UpdateTweetRequest;
 
 
 import org.springframework.http.HttpStatus;
@@ -68,6 +69,21 @@ public class TweetController {
                 tweet.getUser().getUsername()
         );
     }
+    // Update an existing tweet
+@PutMapping("/{id}")
+public TweetResponse updateTweet(
+        @PathVariable Long id,
+        @Valid @RequestBody UpdateTweetRequest request) {
+
+    Tweet updatedTweet = tweetService.updateTweet(id, request);
+
+    return new TweetResponse(
+            updatedTweet.getId(),
+            updatedTweet.getContent(),
+            updatedTweet.getUser().getId(),
+            updatedTweet.getUser().getUsername()
+    );
+}
 
     // Delete a tweet
     @DeleteMapping("/{id}")

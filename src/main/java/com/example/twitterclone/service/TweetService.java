@@ -6,6 +6,7 @@ import com.example.twitterclone.entity.User;
 import com.example.twitterclone.exception.ResourceNotFoundException;
 import com.example.twitterclone.repository.TweetRepository;
 import com.example.twitterclone.repository.UserRepository;
+import com.example.twitterclone.dto.UpdateTweetRequest;
 
 
 import org.springframework.stereotype.Service;
@@ -54,6 +55,19 @@ public class TweetService {
                     new ResourceNotFoundException(
                             "Tweet not found with ID: " + id
                     ));
+}
+// Update an existing tweet
+public Tweet updateTweet(Long id, UpdateTweetRequest request) {
+
+    Tweet tweet = tweetRepository.findById(id)
+            .orElseThrow(() ->
+                    new ResourceNotFoundException(
+                            "Tweet not found with ID: " + id
+                    ));
+
+    tweet.setContent(request.getContent());
+
+    return tweetRepository.save(tweet);
 }
 
     // Delete a tweet
