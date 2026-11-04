@@ -82,5 +82,25 @@ public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
     return ResponseEntity.noContent().build();
 }
 
+// Follow another user
+@PostMapping("/{followerId}/follow/{followingId}")
+public ResponseEntity<String> followUser(
+        @PathVariable Long followerId,
+        @PathVariable Long followingId) {
 
+    userService.followUser(followerId, followingId);
+
+    return ResponseEntity.ok("User followed successfully");
+}
+
+// Unfollow a user
+@DeleteMapping("/{followerId}/follow/{followingId}")
+public ResponseEntity<String> unfollowUser(
+        @PathVariable Long followerId,
+        @PathVariable Long followingId) {
+
+    userService.unfollowUser(followerId, followingId);
+
+    return ResponseEntity.ok("User unfollowed successfully");
+}
 }

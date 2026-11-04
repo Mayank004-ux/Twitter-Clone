@@ -12,6 +12,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.JoinColumn;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -38,11 +43,21 @@ private String username;
 private String email;
 
 @NotBlank(message = "Password cannot be empty")
-@Size(min = 8, message = "Password must be at least 8 characters")
 private String password;
 
 @OneToMany(mappedBy = "user")
 private List<Tweet> tweets = new ArrayList<>();
+
+@ManyToMany
+@JoinTable(
+    name = "user_followers",
+    joinColumns = @JoinColumn(name = "follower_id"),
+    inverseJoinColumns = @JoinColumn(name = "following_id")
+)
+private Set<User> following = new HashSet<>();
+
+@ManyToMany(mappedBy = "following")
+private Set<User> followers = new HashSet<>();
 
 public User() {
 }
@@ -89,5 +104,19 @@ public List<Tweet> getTweets() {
 public void setTweets(List<Tweet> tweets) {
     this.tweets = tweets;
 }
+public Set<User> getFollowing() {
+    return following;
+}
 
+public void setFollowing(Set<User> following) {
+    this.following = following;
+}
+
+public Set<User> getFollowers() {
+    return followers;
+}
+
+public void setFollowers(Set<User> followers) {
+    this.followers = followers;
+}
 }

@@ -4,6 +4,7 @@ import com.example.twitterclone.entity.User;
 import com.example.twitterclone.exception.DuplicateResourceException;
 import com.example.twitterclone.exception.ResourceNotFoundException;
 import com.example.twitterclone.repository.UserRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -102,5 +103,39 @@ private User findUserById(Long id) {
                             "User not found with id: " + id
                     ));
 }
+// Follow another user
+@Transactional
+public void followUser(Long followerId, Long followingId) {
 
+    if (followerId.equals(followingId)) {
+        throw new IllegalArgumentException("A user cannot follow themselves");
+    }
+
+    User follower = findUserById(followerId);
+    User following = findUserById(followingId);
+
+    if (!follower.getFollowing().add(following)) {
+        throw new DuplicateResourceException("Already following this user");
+    }
+
+    following.getFollowers().add(follower);
+
+    userRepository.save(follower);
+}
+
+// Unfollow a user
+@Transactional
+public void unfollowUser(Long followerId, Long followingId) {
+
+    User follower = findUserById(followerId);
+    User following = findUserById(followingId);
+
+    if (!follower.getFollowing().remove(following)) {
+        throw new ResourceNotFoundException("You are not following this user");
+    }
+
+    following.getFollowers().remove(follower);
+
+    userRepository.save(follower);
+}
 }
