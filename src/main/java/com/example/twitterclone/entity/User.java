@@ -9,6 +9,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import jakarta.persistence.Column;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -37,6 +40,9 @@ private String email;
 @NotBlank(message = "Password cannot be empty")
 @Size(min = 8, message = "Password must be at least 8 characters")
 private String password;
+
+@OneToMany(mappedBy = "user")
+private List<Tweet> tweets = new ArrayList<>();
 
 public User() {
 }
@@ -76,6 +82,12 @@ public String getPassword() {
 public void setPassword(String password) {
     this.password = password;
 }
+public List<Tweet> getTweets() {
+    return tweets;
+}
 
+public void setTweets(List<Tweet> tweets) {
+    this.tweets = tweets;
+}
 
 }
