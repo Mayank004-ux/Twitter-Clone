@@ -103,4 +103,13 @@ public ResponseEntity<String> unfollowUser(
 
     return ResponseEntity.ok("User unfollowed successfully");
 }
+@DeleteMapping("/{userId}/tweets/{tweetId}")
+public ResponseEntity<String> removeTweetFromUser(
+        @PathVariable Long userId,
+        @PathVariable Long tweetId) {
+
+    userService.removeTweetFromUser(userId, tweetId);
+
+    return ResponseEntity.ok("Tweet removed from user successfully");
+}
 }

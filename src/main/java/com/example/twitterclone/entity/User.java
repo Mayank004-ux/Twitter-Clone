@@ -17,6 +17,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.JoinColumn;
 import java.util.HashSet;
 import java.util.Set;
+import jakarta.persistence.CascadeType;
 
 @Entity
 @Table(name = "users")
@@ -45,7 +46,11 @@ private String email;
 @NotBlank(message = "Password cannot be empty")
 private String password;
 
-@OneToMany(mappedBy = "user")
+@OneToMany(
+    mappedBy = "user",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
+)
 private List<Tweet> tweets = new ArrayList<>();
 
 @ManyToMany

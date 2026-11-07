@@ -138,4 +138,19 @@ public void unfollowUser(Long followerId, Long followingId) {
 
     userRepository.save(follower);
 }
+@Transactional
+public void removeTweetFromUser(Long userId, Long tweetId) {
+
+    User user = findUserById(userId);
+
+    boolean removed = user.getTweets().removeIf(
+        tweet -> tweet.getId().equals(tweetId)
+    );
+
+    if (!removed) {
+        throw new ResourceNotFoundException(
+            "Tweet not found for this user"
+        );
+    }
+}
 }
